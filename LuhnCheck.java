@@ -1,11 +1,6 @@
-import java.util.Scanner;
+import java.util.*;
 
 public class LuhnCheck {
-
-    static final String VISA = "VISA"; // 4
-    static final String MASTER_CARD = "MASTER CARD"; // 5
-    static final String AMEX = "AMERICAN EXPRESS"; // 37
-    static final String DISCOVER = "DISCOVER"; // 6
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
 
@@ -16,16 +11,31 @@ public class LuhnCheck {
         input = sc.nextLong();
 
         stringInput = Long.toString(input);
-        System.out.println(rToLEvenSum(input));
-        System.out.println(rToLOddSum(input));
+        if (isValid(input, stringInput)) {
+            System.out.print(input + " is valid");
+        }
+        else if (!isValid(input, stringInput)){
+            System.out.print(input + " is not valid");
+        }
+        sc.close();
     }
-
+    public static boolean isValid(Long longInput, String stringInput) {
+        long sum = (rToLEvenSum(longInput) + rToLOddSum(longInput)) % 10;
+        boolean output = false; 
+        if (sum == 0 && isCardLengthCorrect(stringInput) && isPrefixCorrect(stringInput)) {
+            output = true;
+        }
+        else if((sum != 0) || !isCardLengthCorrect(stringInput) || !isPrefixCorrect(stringInput)) {
+            output = false;
+        }
+        return output;
+    }
     public static long rToLEvenSum(long input){
         long output = 0,
              digit = 0,
              tracker = 1,
              numX2 = 0;
-        
+
         while (input > 0) {    
             if ((tracker % 2) == 0){
                 digit = input % 10;
@@ -37,12 +47,11 @@ public class LuhnCheck {
                 else if (numX2 > 9){
                     output += numX2 - 9;
                 }
-               
+
                 input /= 10;
                 tracker++;
             }
             else if ((tracker % 2) != 0) {
-                //temp = input % 10;
                 input /= 10;
                 tracker++;
             }
@@ -63,7 +72,7 @@ public class LuhnCheck {
                 input /= 10;
                 tracker++;
             } 
-            
+
             else if ((tracker % 2) == 0) {
                 input /= 10;
                 tracker++;
@@ -74,11 +83,9 @@ public class LuhnCheck {
 
     public static boolean isCardLengthCorrect(String input){
         if (input.length() >= 13 && input.length() <= 16){
-            System.out.println("Card is valid");
             return true;
         }
         else{
-            System.out.println("Card is invalid");
             return false;
         }
     }
@@ -87,25 +94,25 @@ public class LuhnCheck {
 
         boolean output = false;
 
-        if (input.charAt(0) == 4){
+        if (Integer.parseInt(Character.toString(input.charAt(0))) == 4){
             output = true;
         }
 
-        else if (input.charAt(0) == 5) {
+        // Master Card
+        else if (Integer.parseInt(Character.toString(input.charAt(0))) == 5) {
             output = true;
         }
 
-        else if (input.charAt(0) == 6) {
+        // Discover
+        else if (Integer.parseInt(Character.toString(input.charAt(0))) == 6) {
             output = true;
         }
 
-        else if (input.charAt(0) == 3){
-            if(input.charAt(1) == 7){
+        // American Express
+        else if (Integer.parseInt(Character.toString(input.charAt(0))) == 3){
+            if(Integer.parseInt(Character.toString(input.charAt(1))) == 7){
                 output = true;
             }
-        }
-        else {
-            output = false;
         }
         return output;
     }
